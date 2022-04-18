@@ -63,45 +63,48 @@ class _WifiSetup extends State<WifiSetup> {
             width: MediaQuery.of(context).size.width - 20,
             child: Form(
               key: _formKey,
-              child: Column(
-                children: [
-                  DropdownButtonFormField(
-                      items: ssids.map((String ssid) {
-                        return DropdownMenuItem(value: ssid, child: Text(ssid));
-                      }).toList(),
-                      onChanged: (value) async {
-                        print(value);
-                      },
-                      hint: const Text("Select ssid from list ->"),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select ssid';
-                        }
-                        credentials[0] = value.toString();
-                        return null;
-                      }),
-                  TextFormField(
-                    controller: _passController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      credentials[1] = value;
-                      return null;
-                    },
-                    decoration: const InputDecoration(hintText: "Password"),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            widget.callback(credentials);
-                          }
+              child: Expanded(
+                child: Column(
+                  children: [
+                    DropdownButtonFormField(
+                        items: ssids.map((String ssid) {
+                          return DropdownMenuItem(
+                              value: ssid, child: Text(ssid));
+                        }).toList(),
+                        onChanged: (value) async {
+                          print(value);
                         },
-                        child: const Text("Send crendetials")),
-                  ),
-                ],
+                        hint: const Text("Select ssid from list ->"),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select ssid';
+                          }
+                          credentials[0] = value.toString();
+                          return null;
+                        }),
+                    TextFormField(
+                      controller: _passController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        credentials[1] = value;
+                        return null;
+                      },
+                      decoration: const InputDecoration(hintText: "Password"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              widget.callback(credentials);
+                            }
+                          },
+                          child: const Text("Send crendetials")),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
