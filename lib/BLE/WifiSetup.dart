@@ -12,6 +12,7 @@ class WifiSetup extends StatefulWidget {
 
 class _WifiSetup extends State<WifiSetup> {
   List<String> credentials = ["SSID", "PASSWORD"];
+  List<String> ssids = ["SSID 1", "SSID 2"];
   late TextEditingController _ssidController;
   late TextEditingController _passController;
 
@@ -45,17 +46,21 @@ class _WifiSetup extends State<WifiSetup> {
               key: _formKey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: _ssidController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      credentials[0] = value;
-                      return null;
-                    },
-                    decoration: const InputDecoration(hintText: "SSID"),
-                  ),
+                  DropdownButtonFormField(
+                      items: ssids.map((String ssid) {
+                        return DropdownMenuItem(value: ssid, child: Text(ssid));
+                      }).toList(),
+                      onChanged: (value) async {
+                        print(value);
+                      },
+                      hint: Text("Select ssid from list ->"),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select ssid';
+                        }
+                        credentials[0] = value.toString();
+                        return null;
+                      }),
                   TextFormField(
                     controller: _passController,
                     validator: (value) {
