@@ -1,4 +1,5 @@
 import 'package:bluetooth_soulpot/App.dart';
+import 'package:bluetooth_soulpot/BLE/WifiSetup.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -60,18 +61,22 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: SafeArea(
           child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: const [
-                Text(
-                  "SoulPot",
-                  style: TextStyle(height: 5, fontSize: 10),
-                ),
-              ],
-            ),
-            App(),
-          ],
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "SoulPot",
+                style: TextStyle(height: 5, fontSize: 50),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              App(),
+            ],
+          )
+        ],
       )),
     );
   }

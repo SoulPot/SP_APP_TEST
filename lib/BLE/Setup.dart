@@ -1,7 +1,9 @@
 // ignore_for_file: file_names, avoid_print, unused_local_variable
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:bluetooth_soulpot/BLE/WifiSetup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:loading_animations/loading_animations.dart';
@@ -14,10 +16,15 @@ class Setup extends StatefulWidget {
 }
 
 class _Setup extends State<Setup> {
-  BluetoothDevice? analyzer;
   static String deviceName = "SOULPOT_ESP32_";
-  bool showLoading = false;
+  static String characteristicUuid = "96c44fd5-c309-4553-a11e-b8457810b94c";
+
   bool paired = false;
+  bool showLoading = false;
+  bool wifiSetup = false;
+
+  BluetoothDevice? analyzer;
+  BluetoothCharacteristic? wifiCharacteristic;
   FlutterBlue flutterBlue = FlutterBlue.instance;
 
   void scanBLEDevices() {
@@ -47,7 +54,7 @@ class _Setup extends State<Setup> {
         });
       }
     });
-    if (analyzer != null) {
+    if (analyzer != null && !paired) {
       await analyzer?.connect();
       return;
     }
@@ -58,41 +65,64 @@ class _Setup extends State<Setup> {
     services?.forEach((service) {
       var characteristics = service.characteristics;
       for (BluetoothCharacteristic char in characteristics) {
-        print("DESCRIPTOR ${char.descriptors}");
+        // 80b7f088-0084-43e1-a687-8457bcb2dbc8
+        print("CHAR UUID ${char.uuid.toString()}");
+        if (char.uuid.toString() == characteristicUuid) {
+          print("DESCRIPTOR SOUL POT${char.descriptors}");
+          wifiCharacteristic = char;
+        }
       }
     });
+  }
+
+  void sendWifiCredentials(List<String> credentials) {
+    if (wifiCharacteristic != null) {
+      String credentialsStr = "${credentials[0]},${credentials[1]}";
+      wifiCharacteristic?.write(utf8.encode(credentialsStr));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // scanBLEDevices();
-    return Column(
-      children: [
-        showLoading
-            ? LoadingBouncingGrid.square()
-            : Text(analyzer?.name ?? "No analyzer found"),
-        paired == false
-            ? TextButton(
-                onPressed: () {
-                  setState(() {
-                    showLoading = true;
-                  });
-                  scanBLEDevices();
-                  Timer timer = Timer(const Duration(seconds: 10), () {
-                    setState(() {
-                      showLoading = false;
-                    });
-                  });
-                },
-                child: const Text("Launch scan !"),
-              )
-            : TextButton(
-                onPressed: (() {
-                  print("Suivant");
-                }),
-                child: const Text("Suivant"),
-              )
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(0),
+      child: Row(children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            showLoading
+                ? LoadingBouncingGrid.square()
+                : Text(analyzer?.name ?? "No analyzer found"),
+            paired == false
+                ? TextButton(
+                    child: const Text("Launch scan !"),
+                    onPressed: () {
+                      setState(() {
+                        showLoading = true;
+                      });
+                      scanBLEDevices();
+                      Timer timer = Timer(const Duration(seconds: 10), () {
+                        setState(() {
+                          showLoading = false;
+                        });
+                      });
+                    },
+                  )
+                : wifiSetup == false
+                    ? TextButton(
+                        child: const Text("Suivant"),
+                        onPressed: (() {
+                          wifiSetup = true;
+                        }),
+                      )
+                    : WifiSetup((credentials) {
+                        sendWifiCredentials(credentials);
+                      }),
+          ],
+        ),
+      ]),
     );
   }
 }
