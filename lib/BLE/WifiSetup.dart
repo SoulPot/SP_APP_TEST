@@ -1,5 +1,8 @@
 // ignore_for_file: file_names
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:wifi_hunter/wifi_hunter.dart';
+import 'package:wifi_hunter/wifi_hunter_result.dart';
 
 typedef Callback = void Function(List<String>);
 
@@ -12,28 +15,44 @@ class WifiSetup extends StatefulWidget {
 
 class _WifiSetup extends State<WifiSetup> {
   List<String> credentials = ["SSID", "PASSWORD"];
-  List<String> ssids = ["SSID 1", "SSID 2"];
-  late TextEditingController _ssidController;
+  List<String> ssids = ["Scanning wifi networks please wait..."];
   late TextEditingController _passController;
 
   final _formKey = GlobalKey<FormState>();
 
+  void scanSSIDS() async {
+    WiFiHunterResult wiFiHunterResult = WiFiHunterResult();
+    List<String> _ssids = [];
+    try {
+      wiFiHunterResult = (await WiFiHunter.huntWiFiNetworks)!;
+    } on PlatformException catch (exception) {
+      print(exception.toString());
+    }
+
+    for (int i = 0; i < wiFiHunterResult.results.length; i++) {
+      _ssids.add(wiFiHunterResult.results[i].SSID);
+    }
+    setState(() {
+      ssids = _ssids;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _ssidController = TextEditingController();
     _passController = TextEditingController();
+    scanSSIDS();
   }
 
   @override
   void dispose() {
-    _ssidController.dispose();
     _passController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(ssids);
     return Column(
       children: [
         const Text("Wifi Setup"),
@@ -53,7 +72,7 @@ class _WifiSetup extends State<WifiSetup> {
                       onChanged: (value) async {
                         print(value);
                       },
-                      hint: Text("Select ssid from list ->"),
+                      hint: const Text("Select ssid from list ->"),
                       validator: (value) {
                         if (value == null) {
                           return 'Please select ssid';
