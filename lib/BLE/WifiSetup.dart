@@ -74,7 +74,7 @@ class _WifiSetup extends State<WifiSetup> {
                         onChanged: (value) async {
                           print(value);
                         },
-                        hint: const Text("Select ssid from list ->"),
+                        hint: Text(ssids.first),
                         validator: (value) {
                           if (value == null) {
                             return 'Please select ssid';
@@ -101,7 +101,7 @@ class _WifiSetup extends State<WifiSetup> {
                               widget.callback(credentials);
                             }
                           },
-                          child: const Text("Send crendetials")),
+                          child: const Text("Send credentials")),
                     ),
                   ],
                 ),
