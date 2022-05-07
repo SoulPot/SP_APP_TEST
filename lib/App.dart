@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:bluetooth_soulpot/BLE/Setup.dart';
+import 'package:bluetooth_soulpot/mqtt.dart';
 import 'package:flutter/cupertino.dart';
 
 class App extends StatefulWidget {
@@ -9,13 +10,13 @@ class App extends StatefulWidget {
 }
 
 class _App extends State<App> {
-  bool firstLaunch = true;
+  bool firstLaunch = false;
   @override
   Widget build(BuildContext context) {
     if (firstLaunch) {
       return const Setup();
     } else {
-      return const Text("Not first launch"); //TODO
+      return const MQTTView();
     }
   }
 }

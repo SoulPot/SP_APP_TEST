@@ -22,16 +22,16 @@
           "deviceId": "MUN0218927006262"
         },
         {
-          "name": "iPad Pro",
+          "name": "iPhone de Julien",
           "request": "launch",
           "type": "dart",
-          "deviceId": "154C96F9-6CDE-411B-940A-CA0F49FCE727"
+          "deviceId": "00008030-00054CD03C46802E"
         }
       ],
       "compounds": [
         {
           "name": "All Devices",
-          "configurations": ["Android", "iPad Pro"]
+          "configurations": ["Android", "iPhone de Julien"]
         }
       ]
 }

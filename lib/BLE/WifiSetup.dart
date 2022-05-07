@@ -52,7 +52,9 @@ class _WifiSetup extends State<WifiSetup> {
 
   @override
   Widget build(BuildContext context) {
-    print(ssids);
+    if (ssids.isEmpty) {
+      ssids.add("No ssids found");
+    }
     return Column(
       children: [
         const Text("Wifi Setup"),
