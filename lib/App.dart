@@ -10,7 +10,7 @@ class App extends StatefulWidget {
 }
 
 class _App extends State<App> {
-  bool firstLaunch = false;
+  bool firstLaunch = true;
   @override
   Widget build(BuildContext context) {
     if (firstLaunch) {

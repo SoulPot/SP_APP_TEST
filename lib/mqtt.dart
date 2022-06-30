@@ -74,13 +74,12 @@ class _MQTTView extends State<MQTTView> {
       final payloadStr =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('received payload $payloadStr -->');
-      if (payloads.length > 15) {
-        payloads.clear();
-      } else {
-        setState(() {
-          payloads.add(payloadStr);
-        });
-      }
+      setState(() {
+        if (payloads.length > 15) {
+          payloads.clear();
+        }
+        payloads.add(payloadStr);
+      });
     });
     mqttClient.published!.listen((MqttPublishMessage message) {
       print(
@@ -106,10 +105,8 @@ class _MQTTView extends State<MQTTView> {
   _MQTTView() {
     deviceId = 'ANALYZER_00';
     initMqttClient();
-    mqttConnect().then((value) => {
-      subscribeToDevice(deviceId),
-      subscribeToDevice('ANALYZER_01')
-    });
+    mqttConnect().then((value) =>
+        {subscribeToDevice(deviceId), subscribeToDevice('ANALYZER_01')});
   }
 
   bool firstLaunch = false;
